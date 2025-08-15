@@ -1,0 +1,45 @@
+version: '3.8'
+services:
+  product-service:
+    build:
+      context: ./backend/product-service
+      dockerfile: Dockerfile
+    ports:
+      - '3001:3001'
+    environment:
+      - PORT=3001
+      - DB_PATH=/data/products.sqlite
+    volumes:
+      - product_data:/data
+
+  order-service:
+    build:
+      context: ./backend/order-service
+      dockerfile: Dockerfile
+    ports:
+      - '3002:3002'
+    environment:
+      - PORT=3002
+      - DB_PATH=/data/orders.sqlite
+      - PRODUCT_SERVICE_URL=http://product-service:3001
+    depends_on:
+      - product-service
+    volumes:
+      - order_data:/data
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      - NEXT_PUBLIC_ORDER_API=http://order-service:3002
+      - NEXT_PUBLIC_PRODUCT_API=http://product-service:3001
+    depends_on:
+      - product-service
+      - order-service
+
+volumes:
+  product_data:
+  order_data:
