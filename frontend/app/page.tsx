@@ -1,68 +1,21 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { productApi, orderApi } from '../lib/api';
+import AdminPageClient from '../components/AdminPageClient';
 import type { Product, Order } from '../lib/types';
-import ProductForm from '../components/ProductForm';
-import ProductList from '../components/ProductList';
-import OrderForm from '../components/OrderForm';
-import OrderList from '../components/OrderList';
-import { Box, Card, CardContent, Container, Typography } from '@mui/material';
 
-export default function Page() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
+async function getProducts(): Promise<Product[]> {
+  const base = process.env.NEXT_PUBLIC_PRODUCT_API || 'http://localhost:3001';
+  const res = await fetch(`${base}/products`, { next: { revalidate: 0 } });
+  if (!res.ok) throw new Error('Failed to load products');
+  return res.json();
+}
 
-  useEffect(() => {
-    Promise.all([
-      productApi.get<Product[]>('/products'),
-      orderApi.get<Order[]>('/orders'),
-    ])
-      .then(([p, o]) => {
-        setProducts(p.data);
-        setOrders(o.data);
-      })
-      .catch((err) => {
-        console.error('Failed to load data', err);
-      });
-  }, []);
+async function getOrders(): Promise<Order[]> {
+  const base = process.env.NEXT_PUBLIC_ORDER_API || 'http://localhost:3002';
+  const res = await fetch(`${base}/orders`, { next: { revalidate: 0 } });
+  if (!res.ok) throw new Error('Failed to load orders');
+  return res.json();
+}
 
-  return (
-    <Container sx={{ py: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        Admin Panel
-      </Typography>
-
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-          gap: 2,
-        }}
-      >
-        <Card variant="outlined">
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              Products
-            </Typography>
-            <Box sx={{ mb: 1 }}>
-              <ProductForm onCreated={(p) => setProducts((prev) => [...prev, p])} />
-            </Box>
-            <ProductList products={products} />
-          </CardContent>
-        </Card>
-
-        <Card variant="outlined">
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              Orders
-            </Typography>
-            <Box sx={{ mb: 1 }}>
-              <OrderForm products={products} onCreated={(o) => setOrders((prev) => [...prev, o])} />
-            </Box>
-            <OrderList orders={orders} products={products} />
-          </CardContent>
-        </Card>
-      </Box>
-    </Container>
-  );
+export default async function Page() {
+  const [products, orders] = await Promise.all([getProducts(), getOrders()]);
+  return <AdminPageClient initialProducts={products} initialOrders={orders} />;
 }
