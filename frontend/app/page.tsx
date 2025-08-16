@@ -2,11 +2,11 @@
 import { useEffect, useState } from 'react';
 import { productApi, orderApi } from '../lib/api';
 import type { Product, Order } from '../lib/types';
-import { styles } from '../styles/ui';
 import ProductForm from '../components/ProductForm';
 import ProductList from '../components/ProductList';
 import OrderForm from '../components/OrderForm';
 import OrderList from '../components/OrderList';
+import { Box, Card, CardContent, Container, Typography } from '@mui/material';
 
 export default function Page() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -27,28 +27,42 @@ export default function Page() {
   }, []);
 
   return (
-    <div style={styles.container}>
-      <div style={styles.title}>Admin Panel</div>
+    <Container sx={{ py: 3 }}>
+      <Typography variant="h4" gutterBottom>
+        Admin Panel
+      </Typography>
 
-      <div style={styles.grid}>
-        <section style={styles.card}>
-          <div style={styles.header}>
-            <h2 style={styles.h2}>Products</h2>
-          </div>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+          gap: 2,
+        }}
+      >
+        <Card variant="outlined">
+          <CardContent>
+            <Typography variant="h6" gutterBottom>
+              Products
+            </Typography>
+            <Box sx={{ mb: 1 }}>
+              <ProductForm onCreated={(p) => setProducts((prev) => [...prev, p])} />
+            </Box>
+            <ProductList products={products} />
+          </CardContent>
+        </Card>
 
-          <ProductForm onCreated={(p) => setProducts((prev) => [...prev, p])} />
-          <ProductList products={products} />
-        </section>
-
-        <section style={styles.card}>
-          <div style={styles.header}>
-            <h2 style={styles.h2}>Orders</h2>
-          </div>
-
-          <OrderForm products={products} onCreated={(o) => setOrders((prev) => [...prev, o])} />
-          <OrderList orders={orders} products={products} />
-        </section>
-      </div>
-    </div>
+        <Card variant="outlined">
+          <CardContent>
+            <Typography variant="h6" gutterBottom>
+              Orders
+            </Typography>
+            <Box sx={{ mb: 1 }}>
+              <OrderForm products={products} onCreated={(o) => setOrders((prev) => [...prev, o])} />
+            </Box>
+            <OrderList orders={orders} products={products} />
+          </CardContent>
+        </Card>
+      </Box>
+    </Container>
   );
 }

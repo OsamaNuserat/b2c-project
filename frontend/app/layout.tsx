@@ -1,11 +1,13 @@
 import React from 'react';
+import Providers from './providers';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body style={{ fontFamily: 'sans-serif', margin: 20 }}>
-        <h1>Admin Panel</h1>
-        {children}
+      <body>
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );

@@ -1,24 +1,26 @@
 "use client";
 import type { Product } from '../lib/types';
-import { styles } from '../styles/ui';
+import { List, ListItem, ListItemText, Typography } from '@mui/material';
 
 interface Props {
   products: Product[];
 }
 
 export default function ProductList({ products }: Props) {
+  if (!products.length) {
+    return <Typography color="text.secondary">No products yet.</Typography>;
+  }
   return (
-    <ul style={styles.list}>
+    <List dense>
       {products.map((p) => (
-        <li key={String(p.id)} style={styles.listItem}>
-          <span>
-            {p.name}
-            {' '}
-            <span style={{ color: '#64748b' }}>({p.description})</span>
-          </span>
-          <span style={styles.price}>${p.price}</span>
-        </li>
+        <ListItem key={String(p.id)}
+          secondaryAction={<Typography color="primary">${p.price}</Typography>}>
+          <ListItemText
+            primary={p.name}
+            secondary={p.description}
+          />
+        </ListItem>
       ))}
-    </ul>
+    </List>
   );
 }

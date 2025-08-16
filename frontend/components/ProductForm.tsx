@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { productApi } from '../lib/api';
 import type { Product, ProductForm as ProductFormType } from '../lib/types';
-import { styles } from '../styles/ui';
+import { Button, Stack, TextField } from '@mui/material';
 
 interface Props {
   onCreated: (product: Product) => void;
@@ -23,33 +23,30 @@ export default function ProductForm({ onCreated }: Props) {
   }
 
   return (
-    <div style={styles.formRow}>
-      <input
-        style={styles.input}
-        placeholder="Name"
+    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+      <TextField
+        label="Name"
         value={form.name}
         onChange={(e) => setForm({ ...form, name: e.target.value })}
+        size="small"
       />
-      <input
-        style={styles.input}
-        placeholder="Description"
+      <TextField
+        label="Description"
         value={form.description}
         onChange={(e) => setForm({ ...form, description: e.target.value })}
+        size="small"
       />
-      <input
-        style={styles.input}
+      <TextField
         type="number"
-        placeholder="Price"
+        label="Price"
         value={form.price}
         onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
+        inputProps={{ min: 0, step: 0.01 }}
+        size="small"
       />
-      <button
-        style={canAdd ? styles.buttonPrimary : styles.buttonPrimaryDisabled}
-        onClick={addProduct}
-        disabled={!canAdd}
-      >
+      <Button variant="contained" onClick={addProduct} disabled={!canAdd}>
         Add
-      </button>
-    </div>
+      </Button>
+    </Stack>
   );
 }

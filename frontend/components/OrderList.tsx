@@ -1,6 +1,6 @@
 "use client";
 import type { Order, Product } from '../lib/types';
-import { styles } from '../styles/ui';
+import { List, ListItem, ListItemText, Typography } from '@mui/material';
 
 interface Props {
   orders: Order[];
@@ -8,19 +8,22 @@ interface Props {
 }
 
 export default function OrderList({ orders, products }: Props) {
+  if (!orders.length) {
+    return <Typography color="text.secondary">No orders yet.</Typography>;
+  }
   return (
-    <ul style={styles.list}>
+    <List dense>
       {orders.map((o) => {
         const product = products.find((p) => String(p.id) === String(o.productId));
-        const label = product ? `${product.name}` : `${o.productId}`;
+        const label = product ? product.name : String(o.productId);
         return (
-          <li key={String(o.id)} style={styles.listItem}>
-            <span>
-              {label} × {o.quantity}
-            </span>
-          </li>
+          <ListItem key={String(o.id)}>
+            <ListItemText
+              primary={`${label} × ${o.quantity}`}
+            />
+          </ListItem>
         );
       })}
-    </ul>
+    </List>
   );
 }

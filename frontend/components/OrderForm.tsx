@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { orderApi } from '../lib/api';
 import type { Order, OrderForm as OrderFormType, Product } from '../lib/types';
-import { styles } from '../styles/ui';
+import { Button, MenuItem, Stack, TextField } from '@mui/material';
 
 interface Props {
   products: Product[];
@@ -24,33 +24,35 @@ export default function OrderForm({ products, onCreated }: Props) {
   }
 
   return (
-    <div style={styles.formRow}>
-      <select
-        style={styles.select}
+    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ mb: 1 }}>
+      <TextField
+        select
+        label="Product"
         value={form.productId}
         onChange={(e) => setForm({ ...form, productId: e.target.value })}
+        sx={{ minWidth: 220 }}
+        size="small"
       >
-        <option value="">Select product</option>
+        <MenuItem value="">Select product</MenuItem>
         {products.map((p) => (
-          <option key={String(p.id)} value={String(p.id)}>
+          <MenuItem key={String(p.id)} value={String(p.id)}>
             {p.name}
-          </option>
+          </MenuItem>
         ))}
-      </select>
-      <input
-        style={styles.input}
+      </TextField>
+
+      <TextField
         type="number"
-        placeholder="Quantity"
+        label="Quantity"
         value={form.quantity}
         onChange={(e) => setForm({ ...form, quantity: Number(e.target.value) })}
+        inputProps={{ min: 1 }}
+        size="small"
       />
-      <button
-        style={canAdd ? styles.buttonPrimary : styles.buttonPrimaryDisabled}
-        onClick={addOrder}
-        disabled={!canAdd}
-      >
+
+      <Button variant="contained" onClick={addOrder} disabled={!canAdd}>
         Add
-      </button>
-    </div>
+      </Button>
+    </Stack>
   );
 }
