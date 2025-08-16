@@ -1,8 +1,7 @@
 "use client";
-import { useState } from 'react';
-import { orderApi } from '../lib/api';
-import type { Order, OrderForm as OrderFormType, Product } from '../lib/types';
+import type { Order, Product } from '../lib/types';
 import { Button, MenuItem, Stack, TextField } from '@mui/material';
+import { useRef, useState } from 'react';
 
 interface Props {
   products: Product[];
@@ -10,49 +9,67 @@ interface Props {
 }
 
 export default function OrderForm({ products, onCreated }: Props) {
-  const [form, setForm] = useState<OrderFormType>({ productId: '', quantity: 1 });
-  const canAdd = form.productId !== '' && form.quantity > 0;
+  const formRef = useRef<HTMLFormElement | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
-  async function addOrder() {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const productId = String(fd.get('productId') || '');
+    const quantity = Number(fd.get('quantity') || 0);
+    if (!productId || quantity <= 0) return;
+
     try {
-      const res = await orderApi.post<Order>('/orders', form);
-      onCreated(res.data);
-      setForm({ productId: '', quantity: 1 });
+      setSubmitting(true);
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId, quantity }),
+      });
+      const data = await res.json();
+      onCreated(data as Order);
+      e.currentTarget.reset();
     } catch (err) {
       console.error('Failed to add order', err);
+    } finally {
+      setSubmitting(false);
     }
   }
 
   return (
-    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ mb: 1 }}>
-      <TextField
-        select
-        label="Product"
-        value={form.productId}
-        onChange={(e) => setForm({ ...form, productId: e.target.value })}
-        sx={{ minWidth: 220 }}
-        size="small"
-      >
-        <MenuItem value="">Select product</MenuItem>
-        {products.map((p) => (
-          <MenuItem key={String(p.id)} value={String(p.id)}>
-            {p.name}
-          </MenuItem>
-        ))}
-      </TextField>
+    <form ref={formRef} onSubmit={handleSubmit}>
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ mb: 1 }}>
+        <TextField
+          select
+          name="productId"
+          label="Product"
+          defaultValue=""
+          sx={{ minWidth: 220 }}
+          size="small"
+          required
+        >
+          <MenuItem value="">Select product</MenuItem>
+          {products.map((p) => (
+            <MenuItem key={String(p.id)} value={String(p.id)}>
+              {p.name}
+            </MenuItem>
+          ))}
+        </TextField>
 
-      <TextField
-        type="number"
-        label="Quantity"
-        value={form.quantity}
-        onChange={(e) => setForm({ ...form, quantity: Number(e.target.value) })}
-        inputProps={{ min: 1 }}
-        size="small"
-      />
+        <TextField
+          type="number"
+          name="quantity"
+          label="Quantity"
+          defaultValue={1}
+          slotProps={{ htmlInput: { min: 1 } }}
+          size="small"
+          required
+        />
 
-      <Button variant="contained" onClick={addOrder} disabled={!canAdd}>
-        Add
-      </Button>
-    </Stack>
+        <Button type="submit" variant="contained" disabled={submitting}>
+          {submitting ? 'Adding...' : 'Add'}
+        </Button>
+      </Stack>
+    </form>
   );
 }
