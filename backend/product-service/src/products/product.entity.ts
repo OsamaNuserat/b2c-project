@@ -22,4 +22,8 @@ export class Product {
     @ApiProperty({ required: false })
     @Column({ nullable: true })
     image?: string;
+
+    @ApiProperty()
+    @Column('integer', { default: 0 })
+    quantity!: number;
 }

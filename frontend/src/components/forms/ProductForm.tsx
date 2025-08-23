@@ -34,6 +34,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, isL
             description: product?.description || '',
             price: product?.price || 0,
             image: product?.image || '',
+            quantity: product?.quantity || 0,
         },
     });
 
@@ -94,7 +95,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, isL
                         />
                     </Box>
 
-                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
+                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
                         <Controller
                             name='price'
                             control={control}
@@ -109,6 +110,23 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, isL
                                     helperText={errors.price?.message}
                                     disabled={isLoading}
                                     onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                                />
+                            )}
+                        />
+                        <Controller
+                            name='quantity'
+                            control={control}
+                            render={({ field }) => (
+                                <TextField
+                                    {...field}
+                                    label='Quantity *'
+                                    type='number'
+                                    fullWidth
+                                    inputProps={{ min: 0 }}
+                                    error={!!errors.quantity}
+                                    helperText={errors.quantity?.message}
+                                    disabled={isLoading}
+                                    onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                                 />
                             )}
                         />

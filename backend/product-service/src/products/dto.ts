@@ -21,6 +21,11 @@ export class CreateProductDto {
     @IsString()
     @IsOptional()
     image?: string;
+
+    @ApiProperty()
+    @IsNumber()
+    @Min(0)
+    quantity!: number;
 }
 
 export class UpdateProductDto {
@@ -44,4 +49,10 @@ export class UpdateProductDto {
     @IsString()
     @IsOptional()
     image?: string;
+
+    @ApiProperty({ required: false })
+    @IsNumber()
+    @IsOptional()
+    @Min(0)
+    quantity?: number;
 }

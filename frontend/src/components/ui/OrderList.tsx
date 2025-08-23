@@ -92,11 +92,10 @@ export const OrderList: React.FC<OrderListProps> = ({ orders, onEdit, onDelete, 
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell>Order ID</TableCell>
-                        <TableCell>Product</TableCell>
                         <TableCell>Product Image</TableCell>
+                        <TableCell>Product Name</TableCell>
+                        <TableCell>Customer</TableCell>
                         <TableCell align='right'>Quantity</TableCell>
-                        <TableCell align='right'>Unit Price</TableCell>
                         <TableCell align='right'>Total Price</TableCell>
                         <TableCell align='center'>Actions</TableCell>
                     </TableRow>
@@ -107,33 +106,22 @@ export const OrderList: React.FC<OrderListProps> = ({ orders, onEdit, onDelete, 
 
                         return (
                             <TableRow key={order.id} hover>
-                                <TableCell>
-                                    <Typography variant='subtitle2' fontWeight='medium'>
-                                        #{order.id.slice(-8)}
-                                    </Typography>
-                                </TableCell>
+                                <TableCell>{renderProductImage(order)}</TableCell>
+                                <TableCell>{order.product?.name}</TableCell>
                                 <TableCell>
                                     <Box>
-                                        <Typography variant='subtitle2' fontWeight='medium'>
-                                            {order.product?.name || 'Product not found'}
+                                        <Typography variant='body2' fontWeight='medium'>
+                                            {order.customerName}
                                         </Typography>
-                                        <Typography variant='body2' color='textSecondary'>
-                                            {order.product?.description || 'No description'}
+                                        <Typography variant='caption' color='text.secondary'>
+                                            {order.customerEmail}
                                         </Typography>
                                     </Box>
                                 </TableCell>
-                                <TableCell>{renderProductImage(order)}</TableCell>
                                 <TableCell align='right'>
                                     <Chip label={order.quantity} color='secondary' variant='outlined' size='small' />
                                 </TableCell>
-                                <TableCell align='right'>
-                                    <Typography variant='body2'>
-                                        ${order.product?.price.toFixed(2) || '0.00'}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell align='right'>
-                                    <Chip label={`$${totalPrice.toFixed(2)}`} color='primary' size='small' />
-                                </TableCell>
+                                <TableCell align='right'>${totalPrice.toFixed(2)}</TableCell>
                                 <TableCell align='center'>
                                     <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
                                         <IconButton

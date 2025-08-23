@@ -96,6 +96,7 @@ export const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDe
                         <TableCell>Name</TableCell>
                         <TableCell>Description</TableCell>
                         <TableCell align='right'>Price</TableCell>
+                        <TableCell align='right'>Quantity</TableCell>
                         <TableCell align='center'>Actions</TableCell>
                     </TableRow>
                 </TableHead>
@@ -122,10 +123,11 @@ export const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDe
                                     {product.description}
                                 </Typography>
                             </TableCell>
+                            <TableCell align='right'>${product.price.toFixed(2)}</TableCell>
                             <TableCell align='right'>
                                 <Chip
-                                    label={`$${product.price.toFixed(2)}`}
-                                    color='primary'
+                                    label={product.quantity}
+                                    color={product.quantity > 0 ? 'success' : 'error'}
                                     variant='outlined'
                                     size='small'
                                 />
