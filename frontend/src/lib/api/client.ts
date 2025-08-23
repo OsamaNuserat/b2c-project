@@ -1,22 +1,29 @@
 import axios, { AxiosInstance } from 'axios';
 import { API_CONFIG } from './config';
 
-// Create axios instances for each service
 export const productApiClient: AxiosInstance = axios.create({
-  baseURL: API_CONFIG.PRODUCT_API,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+    baseURL: API_CONFIG.PRODUCT_API,
+    headers: { 'Content-Type': 'application/json' },
 });
 
 export const orderApiClient: AxiosInstance = axios.create({
-  baseURL: API_CONFIG.ORDER_API,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+    baseURL: API_CONFIG.ORDER_API,
+    headers: { 'Content-Type': 'application/json' },
 });
 
-// Generic error handler
+export const uploadImage = async (file: File): Promise<{ url: string; filename: string }> => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await productApiClient.post('/products/upload', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+
+    return response.data;
+};
+
 export const handleApiError = (error: any): string => {
   if (error.response?.data?.message) {
     return error.response.data.message;

@@ -9,8 +9,13 @@ export const productSchema = z.object({
 });
 
 export const orderSchema = z.object({
-  productId: z.string().min(1, 'Product is required'),
-  quantity: z.number().int().min(1, 'Quantity must be at least 1').max(999, 'Quantity must be less than 999'),
+    productId: z.string().min(1, 'Product is required'),
+    quantity: z.number().min(1, 'Quantity must be at least 1').max(999, 'Quantity must be less than 999'),
+    customerName: z
+        .string()
+        .min(1, 'Customer name is required')
+        .max(100, 'Customer name must be less than 100 characters'),
+    customerEmail: z.string().email('Must be a valid email').max(100, 'Email must be less than 100 characters'),
 });
 
 export type ProductFormData = z.infer<typeof productSchema>;

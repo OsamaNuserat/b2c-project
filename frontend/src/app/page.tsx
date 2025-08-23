@@ -71,7 +71,7 @@ export default function HomePage() {
               size="large"
               startIcon={<OrdersIcon />}
               color="secondary"
-            >
+        >
               Manage Orders
             </Button>
           </CardActions>

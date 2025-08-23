@@ -3,19 +3,23 @@ import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
 export class Product {
-  @ApiProperty()
-  @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    @ApiProperty()
+    @PrimaryGeneratedColumn('uuid')
+    id!: string;
 
-  @ApiProperty()
-  @Column({ length: 255 })
-  name!: string;
+    @ApiProperty()
+    @Column({ length: 255 })
+    name!: string;
 
-  @ApiProperty()
-  @Column('text')
-  description!: string;
+    @ApiProperty()
+    @Column('text')
+    description!: string;
 
-  @ApiProperty()
-  @Column('real')
-  price!: number;
+    @ApiProperty()
+    @Column('real')
+    price!: number;
+
+    @ApiProperty({ required: false })
+    @Column({ nullable: true })
+    image?: string;
 }
